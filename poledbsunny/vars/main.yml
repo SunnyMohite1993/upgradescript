@@ -1,0 +1,27 @@
+---
+# Default vars file
+
+# Full - for scratch deployment OR Upgrade - for upgrades. Customer for regression server only
+deployment_style: Upgrade
+customer: MET
+
+# Declaring if DB is Oracle.Don't change this.
+db_type: Oracle
+sid: ORCL
+pole_db_name: pole
+oracle_port: 1521
+pole_user: pole
+pole_pass: pole
+
+
+
+#SQL
+
+
+# Script source location and copy to destination locations
+release_path: "/data/releases/Test"
+scripts_src_path: "{{ release_path }}/Upgrade Scripts/POLE/{{ db_type }}/{{ deployment_style }}/{{ customer }}"
+
+windows_path: D:\temp\pole_scripts
+linux_path: /nps/data/tmp/pole_scripts
+scripts_des_path: "{% if ansible_system == 'Win32NT' %}{{ windows_path }} {% else %}{{ linux_path }} {% end if %}"

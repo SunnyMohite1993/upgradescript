@@ -1,0 +1,4 @@
+localhost ansible_connection=local ansible_user=devops
+
+[target]
+10.101.96.176 ansible_ssh_user=connect-devops@development.local ansible_ssh_pass='6`bZ9[U{2>MxD>Q.'

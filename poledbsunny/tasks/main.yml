@@ -1,0 +1,6 @@
+---
+
+- name: The Database is Oracle
+  include: "{{ db_type }}/{{ deployment_style }}/pull_script_version.yml"
+  when:  ansible_system  == 'Linux' and
+         db_type == 'Oracle' and deployment_style == 'Upgrade'

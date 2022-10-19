@@ -8,7 +8,7 @@
 
 - shell: ls | grep -e 'pole[0-9]*-pole[0-9]*.sql'
   args:
-     chdir: /etc/ansible/roles/testdata
+     chdir: /nps/gitrepo/testdata
   delegate_to: localhost
   register: scripts
 
@@ -33,13 +33,16 @@
 
 - name: Copy the files to DB server for execution
   copy:
-   src: "/etc/ansible/roles/testdata/{{item}}"
+   src: "/nps/gitrepo/testdata/{{item}}"
    dest: /nps/data/temp/testdata
   with_items:
    - "{{files_select}}"
 
-
-
+- name: Executing pole upgrade scripts
+  shell: echo exit | sqlplus "{{pole_user}}/{{pole_pass}}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host=10.101.96.181)(Port=1521))(CONNECT_DATA=(SID=orcl)))" @{{item}}
+  args:
+    chdir: /nps/data/temp/testdata
+  with_items: "{{files_select}}"
 
 
 

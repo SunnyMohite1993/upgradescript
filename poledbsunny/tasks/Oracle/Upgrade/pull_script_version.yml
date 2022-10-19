@@ -9,7 +9,7 @@
 - shell: ls | grep -e 'pole[0-9]*-pole[0-9]*.sql'
   args:
      chdir: /nps/gitrepo/testdata
-  delegate_to: localhost
+  delegate_to: localhost 
   register: scripts
 
 - set_fact:
@@ -43,7 +43,6 @@
   args:
     chdir: /nps/data/temp/testdata
   with_items: "{{files_select}}"
-
 
 
 ## Check below with Rohit and Manish**

@@ -2,7 +2,7 @@
 # Default vars file
 
 # Full - for scratch deployment OR Upgrade - for upgrades. Customer for regression server only
-deployment_style: Upgrade
+deployment: Upgrade
 customer: MET
 
 # Declaring if DB is Oracle.Don't change this.
@@ -16,11 +16,9 @@ pole_pass: pole
 
 
 #SQL
-
-
 # Script source location and copy to destination locations
 release_path: "/data/releases/Test"
-scripts_src_path: "{{ release_path }}/Upgrade Scripts/POLE/{{ db_type }}/{{ deployment_style }}/{{ customer }}"
+scripts_src_path: "{{ release_path }}/Upgrade Scripts/POLE/{{ db_type }}/{{ deployment }}/{{ customer }}"
 
 windows_path: D:\temp\pole_scripts
 linux_path: /nps/data/tmp/pole_scripts

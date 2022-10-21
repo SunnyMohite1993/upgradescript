@@ -1,0 +1,66 @@
+---
+
+- name: Find lastest exceuted script from Pole_Upgrade_Log table
+  shell: echo "select SCRIPT_NAME from ( select * from POLE_UPGRADE_SCRIPT_LOG order by SCRIPT_NAME DESC) where rownum=1;" | sqlplus "{{pole_user}}/{{pole_pass}}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host={{ora_server}})(Port={{oracle_port}}))(CONNECT_DATA=(SID={{oracle_sid}})))"
+  register: latest_executed_script
+
+- set_fact:
+   latest_executed_script: "{{ latest_executed_script.stdout | regex_search('pole[0-9]*-pole[0-9]*.sql')}}"
+
+- include : filter_scripts.yml
+  
+
+# - shell: ls | grep -e 'pole[0-9]*-pole[0-9]*.sql'
+#   args:
+#      chdir: /nps/gitrepo/testdata
+#   delegate_to: localhost 
+#   register: scripts
+
+# - set_fact:
+#    sort_scripts: "{{ scripts.stdout_lines | sort }}"
+
+# - debug: msg="{{sort_scripts}}"
+
+# - set_fact:
+#    latest_executed_script: pole15432-pole15435.sql
+
+# - set_fact:
+#    script_index: "{{ sort_scripts.index(latest_executed_script) }}"
+
+# - debug: msg="{{script_index}}"
+
+# - set_fact:
+#    files_select: "{{ sort_scripts[script_index|int + 1:] }}"
+
+# - debug:
+#    msg: "{{files_select}}"
+
+# - name: Copy the files to DB server for execution
+#   copy:
+#    src: "/nps/gitrepo/testdata/{{item}}"
+#    dest: /nps/data/temp/testdata
+#   with_items:
+#    - "{{files_select}}"
+
+# - name: Executing pole upgrade scripts
+#   shell: echo exit | sqlplus "{{pole_user}}/{{pole_pass}}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host=10.101.96.181)(Port=1521))(CONNECT_DATA=(SID=orcl)))" @{{item}}
+#   args:
+#     chdir: /nps/data/temp/testdata
+#   with_items: "{{files_select}}"
+
+
+## Check below with Rohit and Manish**
+
+# - name: Find upgrade scripts that need to be executed
+#   shell: "ls -1 pole* | awk '$1 > \"pole15435-pole15447.sql\"'"
+#   #shell: ls -1 pole* | awk '$1 > "pole15435-pole15447.sql"'
+#   args:
+#     chdir: /data/releases/6.11.4.0/Upgrade Scripts/POLE/Oracle/Upgrade/MET
+#   delegate_to: localhost 
+#   register: scripts
+
+# - debug:
+#    msg: "{{scripts.stdout_lines}}"
+
+
+

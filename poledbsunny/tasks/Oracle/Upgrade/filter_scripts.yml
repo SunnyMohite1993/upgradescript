@@ -1,0 +1,25 @@
+---
+- name: Collate all the upgrade scripts & sort them
+  shell: ls | grep -e 'pole[0-9]*-pole[0-9]*.sql'
+  args:
+     chdir: "{{pole_script_src}}"
+  delegate_to: localhost 
+  register: all_scripts
+
+# Sort the scripts in asc order as per file name.
+- set_fact:
+   sort_scripts: "{{ all_scripts.stdout_lines | sort }}"
+
+# Find the latest_executed_script in the array of sorted list and assign the Index No. 
+- set_fact:
+   script_index: "{{ sort_scripts.index(latest_executed_script) }}"
+
+# Fidn the scripts which are greater than latest executed script.
+- set_fact:
+   files: "{{ sort_scripts[script_index|int + 1:] }}"
+
+- debug:
+   msg: "The scripts which are greater than {{latest_executed_script}} and need to be executed are : {{files}}"
+
+- include: copy_execute.yml
+  

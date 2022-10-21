@@ -1,0 +1,30 @@
+---
+
+- name: Create temp dir on DB server--{{run_on_host}}
+  file:
+   path: "{{pole_script_dest}}"
+   state: directory
+   recurse: yes
+   owner: oracle
+   mode: 0775
+  become: yes
+
+- name: Copy the script files to DB server--{{run_on_host}} for execution
+  copy:
+   src: "{{pole_script_src}}/{{item}}"
+   dest: "{{pole_script_dest}}"
+   mode: 0775
+   owner: oracle
+  become: yes
+  with_items:
+   - "{{files}}"
+
+# Execute the scripts
+- name: Executing pole upgrade scripts
+  shell: echo exit | sqlplus "{{pole_user}}/{{pole_pass}}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host={{ora_server}})(Port={{oracle_port}}))(CONNECT_DATA=(SID={{oracle_sid}})))" @{{item}}
+  args:
+    chdir: "{{pole_script_dest}}"
+  with_items: "{{files}}"
+
+- debug: 
+   msg: "Upgrade completed"

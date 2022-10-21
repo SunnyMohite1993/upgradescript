@@ -1,6 +1,13 @@
 ---
 
-- name: The Database is Oracle
-  include: "{{ db_type }}/{{ deployment }}/pull_script_version.yml"
-  when:  ansible_system  == 'Linux' and
-         db_type == 'Oracle' and deployment == 'Upgrade'
+- name: Checking connectivity to Oracle
+  shell: echo exit | sqlplus "{{pole_user}}/{{pole_pass}}@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host={{ora_server}})(Port={{oracle_port}}))(CONNECT_DATA=(SID={{oracle_sid}})))"
+  register: output
+  when: db_type == 'Oracle' 
+- fail:
+   msg: "Cannot connect to DB. Please check" 
+  when: "'Connected to:' not in output.stdout_lines"
+
+- name: Redirecting to upgrade pole - Oracle
+  include: "{{ db_type }}/{{ deployment }}/pull_latest_script_version.yml"
+  when: db_type == 'Oracle' and deployment == 'Upgrade' and 'Connected to:' in output.stdout_lines
